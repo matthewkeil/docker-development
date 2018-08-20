@@ -1,0 +1,57 @@
+type Query {
+  ingredients: [Ingredient!]!
+  recipes: [Recipe!]!
+  items: [MenuItem!]!
+  sections: [MenuSection!]!
+  menus: [Menu!]!
+}
+
+# type Mutation {
+#   signup(email: String!, password: String!, name: String!): AuthPayload!
+#   login(email: String!, password: String!): AuthPayload!
+#   createDraft(title: String!, text: String!): Post!
+#   publish(id: ID!): Post!
+#   deletePost(id: ID!): Post!
+# }
+
+type Ingredient {
+  id: ID!
+  name: String!
+  createdAt: Int!
+  createdBy: User!
+}
+
+type Recipe {
+  id: ID!
+  name: String!
+  createdAt: Int!
+  createdBy: User!
+  ingredients: [Ingredient!]
+  inItem: [MenuItem!]
+}
+
+type MenuItem {
+  id: ID!
+  name: String!
+  createdAt: Int!
+  createdBy: User!
+  recipes: [Recipe!]
+  inSection: [MenuSection!]
+}
+
+type MenuSection {
+  id: ID!
+  name: String!
+  createdAt: Int!
+  createdBy: User!
+  items: [MenuItem!]
+  inMenu: [Menu!]
+}
+
+type Menu {
+  id: ID!
+  name: String!
+  createdAt: Int!
+  createdBy: User!
+  sections: [MenuSection!]
+}

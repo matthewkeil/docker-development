@@ -1,0 +1,58 @@
+{
+  "name": "uc",
+  "author": "Matthew Keil",
+  "homepage": "https://utila.coffee",
+  "version": "1.0.0",
+  "description": "Home of UTILA.coffee",
+  "scripts": {
+    "dev": "npm run start & npm run playground",
+    "playground": "graphql playground",
+    "start": "",
+    "api:dev": "nodemon -e ts,graphql -w -x ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",
+    "api:build": "rimraf dist/api && node_modules/.bin/tsc --project config/api/tsconfig.prod.json",
+    "prisma": "prisma"
+  },
+  "nodemon": {
+    "exec?": "ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",
+    "watch?": true,
+    "extensions?": [
+      "ts",
+      "graphql"
+    ]
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "dotenv": "^6.0.0",
+    "graphql": "^0.13.2",
+    "graphql-cli": "^2.16.5",
+    "graphql-tools": "^3.1.1",
+    "graphql-yoga": "^1.16.1",
+    "http-link-dataloader": "^0.1.4",
+    "jsonwebtoken": "^8.3.0",
+    "nodemon": "^1.18.3",
+    "pm2": "^3.0.3",
+    "prisma-binding": "^2.1.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.1",
+    "prisma": "1.14.0",
+    "ts-node": "6.2.0",
+    "typescript": "2.9.2"
+  },
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "node",
+    "graphql",
+    "prisma",
+    "graphql-yoga",
+    "docker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthewkeil/uc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/matthewkeil/uc/issues"
+  }
+}
