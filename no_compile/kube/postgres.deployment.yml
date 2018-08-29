@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: utila-coffee-postgress
+  labels:
+    app: utila-coffee
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: utila-coffee
+    tier: postgres
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-volume-claim
+  labels:
+    app: utila-coffee
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: utila-coffee-postgres-storage
+  volumeMode: Filesystem
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: utila-coffee-postgress
+  labels:
+    app: utila-coffee
+spec:
+  selector:
+    matchLabels:
+      app: utila-coffee
+      tier: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: utila-coffee
+        tier: postgres
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+        - name: postgres
+          image: launcher.gcr.io/google/postgresql9
+          # env:
+          #   - name: "POSTGRES_PASSWORD"
+          #     value: "example-password"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-volume
+              mountPath: /var/lib/postgresql/data
+            # - name: ssl-config
+            #   mountPath: /etc/ssl/certs
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgre-volume-claim
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: ssl-config
+  #     spec:
+  #       storageClassName: ssl-volume
+  #       accessModes:
+  #         - ReadWriteOnce
+  #       resources:
+  #         requests:
+  #           storage: 20Mi
+  # - metadata:
+  #     labels:
+  #       app: utila-coffee
+  #   spec:
+  #     storageClassName: utila-coffee-postgres-storage
+  #     accessModes:
+  #       - ReadWriteOnce
+  #     resources:
+  #       requests:
+  #         storage: 200Mi

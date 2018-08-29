@@ -1,0 +1,12 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongo-config
+spec:
+  storageClassName: mongo-config-volume
+  capacity:
+    storage: 20Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/Users/matthewkeil/dev/uc/config/mongo/config"

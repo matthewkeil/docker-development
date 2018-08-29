@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [[ $1 == "" ]]; then
+    read -p "\n\n>>> enter an admin username (default: \'admin\')\n>>> hit enter for default: " ROOT_USER
+    if [[ "$ROOT_USER" == "" ]]; then
+        $ROOT_USER="admin"
+    fi
+    export MONGO_ROOT_USER=$ROOT_USER
+fi
+
+if [[ $2 == "" ]]; then
+    read -p "\n\n>>> enter an admin password (default: \'pass\')\n>>> hit enter for default: " ROOT_PASS
+    if [[ "$ROOT_PASS" == "" ]]; then
+        $ROOT_PASS="pass"
+    fi
+    export MONGO_ROOT_PASS=$ROOT_PASS
+fi
+
+# Wait for MongoDB to boot
+NOT_RUNNING=1
+while [[ NOT_RUNNING -ne 0 ]]; do
+    echo ">>> waiting for of mongo daemon to start..."
+    sleep 1
+    mongo admin --eval "help" >/dev/null 2>&1
+    NOT_RUNNING=$?
+done
+
+# Create the admin user
+echo "=> Creating admin user with a password in MongoDB"
+mongo admin --eval "db.createUser({user: '$ROOT_USER', pwd: '$ROOT_PASS', roles:[{role:'root',db:'admin'}]});"
+
+sleep 1
+
+build_db.sh
+
+mongod --shutdown
+
+exit 0

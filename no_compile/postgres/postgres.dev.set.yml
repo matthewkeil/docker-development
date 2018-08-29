@@ -1,0 +1,48 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: postgres-set
+spec:
+  selector:
+    matchLabels:
+      name: postgres-local
+  serviceName: postgres-local
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: postgres-local
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+        - name: postgres
+          image: launcher.gcr.io/google/postgresql9
+          # env:
+          #   - name: "POSTGRES_PASSWORD"
+          #     value: "example-password"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: ssl-config
+              mountPath: /etc/ssl/certs
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        storageClassName: postgres-volume
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Mi
+    - metadata:
+        name: ssl-config
+      spec:
+        storageClassName: ssl-volume
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Mi

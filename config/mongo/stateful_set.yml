@@ -1,0 +1,63 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: mongo-set
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+      zone: local
+  serviceName: mongo-service
+  template:
+    metadata:
+      labels:
+        app: mongo
+        zone: local
+    spec:
+      terminationGracePeriodSeconds: 2
+      containers:
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          command:
+            - PATH="$PATH:~/config" &&
+            - chmod +rx /config/*.sh &&
+            - . set_env.sh &&
+            - start.sh
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data
+            - name: mongo-config
+              mountPath: /config
+            - name: ssl
+              mountPath: /ssl
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        storageClassName: mongo-data-volume
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Mi
+    - metadata:
+        name: mongo-config
+      spec:
+        storageClassName: mongo-config-volume
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Mi
+    - metadata:
+        name: ssl
+      spec:
+        storageClassName: ssl-volume
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Mi

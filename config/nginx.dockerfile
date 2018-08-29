@@ -2,11 +2,10 @@ FROM nginx:latest
 
 VOLUME /cache
 
-COPY ./.docker/nginx /config
-COPY ./public /public
+COPY ../public /public/
 COPY ./.docker/ssl /ssl
 
-RUN chmod 600 /ssl
+RUN set -x; chmod 600 /ssl
 
 EXPOSE 80 443
 

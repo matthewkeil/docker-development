@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 200Mi
+  hostPath:
+    path: "/Users/matthewkeil/dev/uc/.db/postgres/data"
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-volume
+  volumeMode: Filesystem

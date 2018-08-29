@@ -1,0 +1,77 @@
+#!/bin/bash
+# set -o noclobber
+set -x
+
+#
+#
+#   Setup environment
+#
+#
+
+export NODE_ENV=${NODE_ENV:-"development"}
+export MONGODB_ROOT_USER=${MONGODB_ROOT_USER:-"admin"}
+export MONGODB_ROOT_PASS=${MONGODB_ROOT_PASS:-"pass"}
+export DB_NAME=${MONGO_DB_NAME:-"uc"}
+export USERNAME=${MONGO_USERNAME:-"ucApi"}
+export PASSWORD=${MONGO_PASSWORD:-"ucApi"}
+
+export DATA_DIR=${DATA_DIR:-"${HOME}/dev/.db/mongo/data/"}
+export SETUP_FILES=${SETUP_FILES:-"${HOME}/dev/.db/mongo/setup/"}
+export DB_SETUP="${SETUP_FILES}/${DB_NAME}.conf"
+
+BASE_CMD="mongod --dbpath=$DATA_DIR --smallfiles --directoryperdb"
+MONGOD="$BASE_CMD --noscripting"
+
+#
+#
+#   build mongod command
+#
+#
+
+if [[ "$MONGO_AUTH" == "false" ]]; then
+    echo ">>> Auth Dissabled <<<"
+else
+    mongod="$MONGOD --auth"
+fi
+
+if [[ "$MONGO_SSL" == "false" ]]; then
+    echo ">>> SSL Dissabled <<<"
+else
+    mongod="$MONGOD --sslMode requireSSL --sslPEMKeyFile /ssl/mongo.pem --sslCAFile /ssl/root.crt "
+fi
+
+if [[ "$MONGO_LOG_PATH" ]]; then
+    mongod="$MONGOD --logpath $MONGO_LOG_PATH"
+fi
+
+if [[ $MONGO_OPLOG_SIZE ]]; then
+    mongod="$MONGOD --oplogSize $MONGO_OPLOG_SIZE"
+fi
+
+if [[ $MONGO_PROFILING ]]; then
+    mongod="$MONGOD --profile $MONGO_PROFILING"
+fi
+
+#
+#
+#   determine mongo and database status
+#
+#
+
+if [[ -d $DATA_DIR ]]; then
+    if [[ -f $dbSetup ]]; then
+        echo ">>> setup file found in ${SETUP_FOLDER}\n>>> starting daemon\n"
+    else
+        echo "boo"
+        # $MONGOD & build_db.sh $DB_NAME $USERNAME $PASSWORD $DB_SETUP
+    fi
+else
+    # $BASE_CMD & build_root.sh $MONGO_ROOT_USER $MONGO_ROOT_PASS
+
+        echo "boo2 yo"
+    if [[ $? == 1 ]]; then
+        exit 1
+    fi
+fi
+
+# $MONGOD

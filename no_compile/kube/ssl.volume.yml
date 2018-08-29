@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: ssl-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 20Mi
+  hostPath:
+    path: "/Users/matthewkeil/dev/uc/config/ssl"
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ssl-volume
+  volumeMode: Filesystem

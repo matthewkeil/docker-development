@@ -1,15 +1,43 @@
-const admin = db.getSiblingDB("admin");
-admin.createUser({
-  user: "admin",
-  pwd: "pass",
-  roles: [{ role: "root", db: "admin" }]
-});
-const uc = db.getSiblingDB("uc");
-uc.createUser({
-  user: "ucApi",
-  pwd: "ucApi",
-  roles: [{ role: "dbOwner", db: "uc" }]
-});
+const path = require("path");
+const fs = require("fs");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
+const spawn = require("../spawn");
+
+const dbpath = path.join(__dirname, "/../../.db/mongo");
+
+const checkDb = () =>
+  fs.readdir(dbpath, (error, files) => {
+    if (error)
+      throw new Error(`${dbpath} does not exist or permissions are incorrect`);
+
+    if (!(Array.isArray(files) && files.length)) {
+      const mongod = spawn("mongod", `--dbpath=${dbpath}`);
+
+      setTimeout(async () => {
+        let command = "mongo";
+        let args = ["<", "/Users/matthewkeil/dev/uc/config/mongo/create-root.mongo"];
+        const cmdStr = command + ' ' + args.join(" ");
+
+        console.log(`>>> Executing init command >>>\n>>> ${cmdStr} >>>\n`);
+
+        const build = spawn(command, args);
+
+        build.on('close', async () => {
+          let { stdout: out, stderr: err } = await exec("pgrep", "mongod");
+          if (err) throw new Error(`ERROR: pgrep mongod \n>>> ${err}`);
+          if (out) {
+            mongod.kill();
+          }
+        });
+
+      }, 1000);
+    } else console.log(">>> mongoDb initContainer - db is setup >>>");
+
+    return;
+  });
+
+module.exports = checkDb();
 
 // ROOT_USER=${MONGO_ROOT_USERNAME}
 // ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -22,11 +50,25 @@ uc.createUser({
 // DB=${MONGO_DB}
 // ROLE=${MONGO_ROLE}
 
-// echo "Strating MongoDB to add users and roles"
-// /user/bin/mongod &
-// while ! nc -vz localhost 27017; do sleep 1; done
+// const MongoClient = require("mongodb").MongoClient;
 
-// if [[ -n $ROOT_USER ]] && [[ -n $ROOT_PASS ]] && [[ -n $ROOT_ROLE ]]
-// then
-//     echo "Creating root user: \"$ROOT_USER\"..."
-//     mongo $ROOT_DB --eval "db.createUser({ user: '$ROOT_USER', pwd: '$ROOT_PASSWORD', roles: [{ role: '$ROOT_ROLE' }] })"
+// MongoClient.connect(
+//   "mongo://localhost:27017",
+//   async (err, client) => {
+//     if (err) throw err;
+
+//     console.log(client);
+// const admin = db.getSiblingDB("admin");
+// admin.createUser({
+//   user: "admin",
+//   pwd: "pass",
+//   roles: [{ role: "root", db: "admin" }]
+// });
+// const uc = db.getSiblingDB("uc");
+// uc.createUser({
+//   user: "ucApi",
+//   pwd: "ucApi",
+//   roles: [{ role: "dbOwner", db: "uc" }]
+// });
+//   }
+// );

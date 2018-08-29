@@ -1,13 +1,18 @@
 FROM mongo:latest
 
-COPY config/mongo/first_run.js /docker-entrypoint-initdb.d/
+WORKDIR /the/workdir/path
+
+VOLUME [ "/data/db:/data/db" ]
+
 COPY config/mongo config/ssl /config/
 
-RUN chmod +rx /config/*.sh && . config/set_env.sh && apt-get update
+RUN apt-get update && chmod +rx /config/*.sh && . /config/set_env.sh
+
+COPY config/mongo/first_run.js /docker-entrypoint-initdb.d/
 
 EXPOSE 27017
 
-ENTRYPOINT ["mongod"]
+ENTRYPOINT ["mongod", "--config", "/config/mongo.conf"]
 #
 # To build:
 # docker build -f config/mongo/Dockerfile --tag uc/mongo .

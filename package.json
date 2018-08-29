@@ -8,9 +8,9 @@
     "dev": "npm run start & npm run playground",
     "playground": "graphql playground",
     "start": "",
-    "api:dev": "nodemon -e ts,graphql -w -x ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",
+    "api:dev": "nodemon",
     "api:build": "rimraf dist/api && node_modules/.bin/tsc --project config/api/tsconfig.prod.json",
-    "prisma": "prisma"
+    "ts-node": "node_modules/.bin/ts-node --project tsconfig.tsnode.json"
   },
   "nodemon": {
     "exec?": "ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",

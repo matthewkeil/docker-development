@@ -1,0 +1,12 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongo-data
+spec:
+  storageClassName: mongo-data-volume
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/Users/matthewkeil/dev/uc/.db/mongo"
