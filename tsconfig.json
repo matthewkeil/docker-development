@@ -1,22 +1,22 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "target": "es2017" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
     "module": "commonjs",
+    "moduleResolution": "node",
     "lib": ["esnext", "dom"],
-    "rootDir": ".",
+    "typeRoots": ["node_modules/@types"],
     // "strict": true,
-    "downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
     // "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"],
+    // "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "inlineSourceMap": true,
     "inlineSources": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
   }
 }

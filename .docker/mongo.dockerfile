@@ -1,18 +1,21 @@
 FROM mongo:latest
 
-WORKDIR /the/workdir/path
+WORKDIR .
 
 VOLUME [ "/data/db:/data/db" ]
+VOLUME [ "/var/log/mongodb:/var/log/mongodb" ]
 
-COPY config/mongo config/ssl /config/
+COPY .docker/bin /bin/
 
-RUN apt-get update && chmod +rx /config/*.sh && . /config/set_env.sh
+COPY .docker/ssl /etc/ssl/certs/
 
-COPY config/mongo/first_run.js /docker-entrypoint-initdb.d/
+RUN chmod +rx /bin/* && \
+    chown -R mongodb:mongodb /data /var /bin && \
+    ln -sf /dev/stdout /var/log/mongodb/mongod.log
 
 EXPOSE 27017
 
-ENTRYPOINT ["mongod", "--config", "/config/mongo.conf"]
+ENTRYPOINT ["/bin/start"]
 #
 # To build:
 # docker build -f config/mongo/Dockerfile --tag uc/mongo .

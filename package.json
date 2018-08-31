@@ -7,10 +7,10 @@
   "scripts": {
     "dev": "npm run start & npm run playground",
     "playground": "graphql playground",
-    "start": "",
-    "api:dev": "nodemon",
+    "start:dev": "echo 'git da fuckouta hear'",
+    "api:dev": "nodemon -w -x node_modules/.bin/ts-node server/index.ts",
     "api:build": "rimraf dist/api && node_modules/.bin/tsc --project config/api/tsconfig.prod.json",
-    "ts-node": "node_modules/.bin/ts-node --project tsconfig.tsnode.json"
+    "ts-node": "node_modules/.bin/ts-node --project tsconfig.json"
   },
   "nodemon": {
     "exec?": "ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",
