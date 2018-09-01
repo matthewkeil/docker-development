@@ -5,20 +5,9 @@
   "version": "1.0.0",
   "description": "Home of UTILA.coffee",
   "scripts": {
-    "dev": "npm run start & npm run playground",
+    "dev": "npm run server & npm run playground",
     "playground": "graphql playground",
-    "start:dev": "echo 'git da fuckouta hear'",
-    "api:dev": "nodemon -w -x node_modules/.bin/ts-node server/index.ts",
-    "api:build": "rimraf dist/api && node_modules/.bin/tsc --project config/api/tsconfig.prod.json",
-    "ts-node": "node_modules/.bin/ts-node --project tsconfig.json"
-  },
-  "nodemon": {
-    "exec?": "ts-node --project config/api/tsconfig.dev.json -r dotenv/config api",
-    "watch?": true,
-    "extensions?": [
-      "ts",
-      "graphql"
-    ]
+    "server": "nodemon --exec ts-node server --watch server --ext ts, graphql"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",

@@ -1,16 +1,20 @@
 FROM node:latest
 
-# VOLUME [ "/server:/server" ]
+COPY .docker/ssl /etc/ssl/certs
 
-COPY config/ssl /etc/ssl/certs
-COPY package.json tsconfig.json /
-RUN npm install
+ENV HOME=/home/app
+
+RUN useradd --user-group --create-home --shell /bin/false app
+
+WORKDIR ${HOME}
+
+USER app
 
 EXPOSE 4000
 
-ENTRYPOINT ["npm", "run", "api:dev"]
+ENTRYPOINT [ "npm", "run", "server" ]
 
-# To build:
+#" "To build:
 # docker build -f server/.dockerfile --tag uc/api .
 
 # To run:

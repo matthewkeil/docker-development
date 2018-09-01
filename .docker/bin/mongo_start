@@ -15,14 +15,11 @@ export NODE_ENV=${NODE_ENV:-"development"}
 export MONGO_AUTH=${MONGO_AUTH:-""} # defaults to true, set to "false" to disable
 export MONGO_SSL=${MONGO_SSL:-""} # defaults to true, set to "false" to disable
 export MONGO_PROFILING=${MONGO_PROFILING:-""}
-
 export MONGODB_ROOT_USER=${MONGODB_ROOT_USER:-"admin"}
 export MONGODB_ROOT_PASS=${MONGODB_ROOT_PASS:-"pass"}
-
 export MONGO_DB_NAME=${MONGO_DB_NAME:-"default"}
 export MONGO_USERNAME=${MONGO_USERNAME:-"apiUser"}
 export MONGO_PASSWORD=${MONGO_PASSWORD:-"apiPass"}
-
 export MONGO_DATA="${MONGO_DATA:-"/data/db"}"
 export SETUP_DIR="${MONGO_DATA}/.setup"
 export SETUP_FILE="${SETUP_DIR}/${MONGO_DB_NAME}.conf"
@@ -65,19 +62,19 @@ if [[ -d $SETUP_DIR ]]; then
     else
         printf ">>>\n>>> creating ${MONGO_USERNAME} account on database named ${MONGO_DB_NAME}\n>>>\n>>> starting daemon\n>>>\n"
         
-        $BASE_CMD &
-        /bin/build_db
+        $BASE_CMD               &
+        /bin/mongo_build_db     && \
+        mongod --shutdown
     fi
 else
     printf ">>>\n>>> starting mongo for the first time and creating root account\n>>>\n>>> starting daemon\n>>>\n"
     
     mkdir -p "$SETUP_DIR"
 
-    $BASE_CMD & 
-    /bin/build_root
-    
-    $BASE_CMD &
-    /bin/build_db
+    $BASE_CMD               & 
+    /bin/mongo_build_root   && \
+    /bin/mongo_build_db     && \
+    mongod --shutdown
 fi
 
 exec $MONGOD

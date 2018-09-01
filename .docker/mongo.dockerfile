@@ -15,7 +15,7 @@ RUN chmod +rx /bin/* && \
 
 EXPOSE 27017
 
-ENTRYPOINT ["/bin/start"]
+ENTRYPOINT ["/bin/mongo_start"]
 #
 # To build:
 # docker build -f config/mongo/Dockerfile --tag uc/mongo .

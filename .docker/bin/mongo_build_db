@@ -62,6 +62,4 @@ printf "${MONGO_DB_NAME}\n${MONGO_USERNAME}\n${MONGO_PASSWORD}\n" >> $SETUP_FILE
 
 echo "DB setup complete"
 
-mongod --shutdown
-
 exit 0

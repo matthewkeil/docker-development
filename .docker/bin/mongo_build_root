@@ -40,6 +40,4 @@ mongo admin --eval "db.createUser({user: '$MONGODB_ROOT_USER', pwd: '$MONGODB_RO
 
 sleep 1
 
-mongod --shutdown
-
 exit 0
