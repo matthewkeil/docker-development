@@ -52,6 +52,37 @@ if [[ $MONGO_PROFILING != "" ]]; then
     MONGOD="$MONGOD --profile $MONGO_PROFILING"
 fi
 
+
+function wait_for_mongo() {
+    # Wait for MongoDB to boot
+    NOT_RUNNING=1
+    while [[ NOT_RUNNING -ne 0 ]]; do
+        echo ">>> waiting for of mongo daemon to start..."
+        sleep 1
+        mongo admin --eval "help" >/dev/null 2>&1
+        NOT_RUNNING=$?
+    done
+}
+
+function build_root() {
+    # Create the admin user
+    wait_for_mongo
+    echo "=> Creating ROOT user $MONGODB_ROOT_USER for MongoDB"
+    mongo admin --eval "db.createUser({user: '$MONGODB_ROOT_USER', pwd: '$MONGODB_ROOT_PASS', roles:[{role:'root',db:'admin'}]});"
+    sleep 1
+}
+
+function build_db() {
+    wait_for_mongo
+    echo "=> Creating user $MONGO_USERNAME on database $MONGODB_DB_NAME"
+    mongo admin << EOF
+    use $MONGO_DB_NAME
+    db.createUser({user: '$MONGO_USERNAME', pwd: '$MONGO_PASSWORD', roles:[{role:'dbOwner', db:'$MONGO_DB_NAME'}]})
+EOF
+    sleep 1
+    printf "${MONGO_DB_NAME}\n${MONGO_USERNAME}\n${MONGO_PASSWORD}\n" >> $SETUP_FILE
+}
+
 #
 #
 #   determine mongo and database status
@@ -64,16 +95,16 @@ if [[ -d $SETUP_DIR ]]; then
     else
         printf ">>>\n>>> creating ${MONGO_USERNAME} account on database named ${MONGO_DB_NAME}\n>>>\n>>> starting daemon\n>>>\n"
         
-        $BASE_CMD               &
-        mongo_build_db.sh     && \
+        $BASE_CMD           &
+        build_db            && \
         mongod --shutdown
     fi
 else
     printf ">>>\n>>> starting mongo for the first time and creating root account\n>>>\n>>> starting daemon\n>>>\n"
 
     $BASE_CMD               & 
-    mongo_build_root.sh   && \
-    mongo_build_db.sh     && \
+    build_root              && \
+    build_db                && \
     mongod --shutdown
 fi
 

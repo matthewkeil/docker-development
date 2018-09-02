@@ -1,5 +1,7 @@
 version: "3.7"
-  
+
+# volumes:
+#   dev-db
 services:
   # redis:
   #   container_name: redis
@@ -25,10 +27,18 @@ services:
       dockerfile: .docker/mongo.dockerfile
     env_file:
       - .env 
+    # image: bitnami/mongodb
+    # environment:
+    #   - MONGODB_ROOT_PASSWORD=pass
+    #   - MONGODB_USERNAME=my_user
+    #   - MONGODB_PASSWORD=password123
+    #   - MONGODB_DATABASE=my_database
     networks: 
       - uc-network
     ports:
       - "27017:27017"
+    volumes:
+      - /Users/matthewkeil/.dev/mongo:/data/db
   # neo4j:
   #   container_name: neo4j
   #   restart: always

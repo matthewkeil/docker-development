@@ -24,7 +24,7 @@ RUN set -ex;                                                                    
     
 RUN set -x;                                                                                             \
     mkdir -p /data/db;                                                                                  \
-    chown -R mongo:mongo /data/db;                                                                      \
+    chown -R 1001:1001 /data/db;                                                                      \
     chmod -R o+rwx /data/db;                                                                            \
     ln -sf /dev/stdout /var/log/mongodb/mongod.log
 
@@ -32,13 +32,13 @@ VOLUME /data/db
 
 COPY .docker/bin /usr/local/bin/
 
-COPY .docker/ssl /usr/local/etc/ssl/certs/
+COPY .docker/ssl /etc/ssl/certs/
 
 WORKDIR /usr/local/bin
 
 EXPOSE 27017
 
-ENTRYPOINT [ "gosu", "mongo", "mongo_start.sh" ]
+ENTRYPOINT [ "mongo_start.sh" ]
 #
 # To build:
 # docker build -f config/mongo/Dockerfile --tag uc/mongo .

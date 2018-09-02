@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "description": "Home of UTILA.coffee",
   "scripts": {
+    "mongo": ".docker/bin/mongo_start.sh",
     "dev": "npm run server & npm run playground",
     "playground": "graphql playground",
     "server": "nodemon --exec ts-node server --watch server --ext ts, graphql"
