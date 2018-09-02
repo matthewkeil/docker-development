@@ -30,7 +30,7 @@ export SETUP_FILE="${SETUP_DIR}/${MONGO_DB_NAME}.conf"
 #   build mongod command
 #
 #
-BASE_CMD="mongod" #--smallfiles --directoryperdb --dbpath=${MONGO_DATA}"
+BASE_CMD="mongod" #--dbpath=/usr/local/data/db --smallfiles --directoryperdb
 
 MONGOD="${BASE_CMD} --noscripting"
 
@@ -43,7 +43,9 @@ fi
 if [[ "$MONGO_SSL" == "false" ]]; then
     echo ">>> SSL Dissabled <<<"
 else
-    MONGOD="$MONGOD --sslMode requireSSL --sslPEMKeyFile /etc/ssl/certs/uc.pem --sslCAFile /etc/ssl/certs/root.crt "
+    MONGOD="$MONGOD --sslMode requireSSL                \
+    --sslPEMKeyFile /usr/local/etc/ssl/certs/uc.pem     \
+    --sslCAFile /usr/local/etc/ssl/certs/root.crt "
 fi
 
 if [[ $MONGO_PROFILING != "" ]]; then
@@ -63,17 +65,15 @@ if [[ -d $SETUP_DIR ]]; then
         printf ">>>\n>>> creating ${MONGO_USERNAME} account on database named ${MONGO_DB_NAME}\n>>>\n>>> starting daemon\n>>>\n"
         
         $BASE_CMD               &
-        /bin/mongo_build_db     && \
+        mongo_build_db.sh     && \
         mongod --shutdown
     fi
 else
     printf ">>>\n>>> starting mongo for the first time and creating root account\n>>>\n>>> starting daemon\n>>>\n"
-    
-    mkdir -p "$SETUP_DIR"
 
     $BASE_CMD               & 
-    /bin/mongo_build_root   && \
-    /bin/mongo_build_db     && \
+    mongo_build_root.sh   && \
+    mongo_build_db.sh     && \
     mongod --shutdown
 fi
 

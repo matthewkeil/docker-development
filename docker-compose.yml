@@ -1,5 +1,5 @@
 version: "3.7"
-
+  
 services:
   # redis:
   #   container_name: redis
@@ -16,26 +16,19 @@ services:
   #   volumes:
   #     - type: bind
   #       source: ./.dev/redis
-  #       target: /var/lib/redis
-  # mongo:
-  #   container_name: mongo
-  #   restart: always
-  #   build:
-  #     context: .
-  #     dockerfile: .docker/mongo.dockerfile
-  #   env_file:
-  #     - .env 
-  #   networks: 
-  #     - uc-network
-  #   ports:
-  #     - "27017:27017"
-  #   volumes: 
-  #     - type: bind
-  #       source: ${MONGO_DATA:-"./.dev/mongo/data"}
-  #       target: /data/db 
-  #     - type: bind
-  #       source: ./.dev/mongo/logs
-  #       target: /var/log/mongodb
+  #       target: /data
+  mongo:
+    container_name: mongo
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/mongo.dockerfile
+    env_file:
+      - .env 
+    networks: 
+      - uc-network
+    ports:
+      - "27017:27017"
   # neo4j:
   #   container_name: neo4j
   #   restart: always
@@ -48,39 +41,39 @@ services:
   #     - "7687:7687"
   #   volumes: 
   #     - type: bind
-  #       source: ./.dev
+  #       source: ./.dev/neo4j
   #       target: /bitnami
-  nginx:
-    container_name: nginx
-    restart: always
-    build:
-      context: ./
-      dockerfile: .docker/nginx.dockerfile
-    networks: 
-      - uc-network
-    depends_on: 
-      - graphql
-    volumes:
-      - type: bind
-        source: ./public
-        target: /var/public/
-      - type: bind
-        source: ./.dev/nginx/cache
-        target: /var/cache/nginx
-  graphql:
-    container_name: graphql
-    build:
-      context: .
-      dockerfile: .docker/server.dockerfile
-    restart: always
-    env_file:
-      - .env 
-    networks: 
-      - uc-network
-    volumes:
-      - type: bind
-        source: ./
-        target: /home/app
+  # nginx:
+  #   container_name: nginx
+  #   restart: always
+  #   build:
+  #     context: ./
+  #     dockerfile: .docker/nginx.dockerfile
+  #   networks: 
+  #     - uc-network
+  #   depends_on: 
+  #     - graphql
+  #   volumes:
+  #     - type: bind
+  #       source: ./public
+  #       target: /var/public/
+  #     - type: bind 
+  #       source: ./.dev/nginx/cache
+  #       target: /var/cache/nginx
+  # graphql:
+  #   container_name: graphql
+  #   build:
+  #     context: .
+  #     dockerfile: .docker/server.dockerfile
+  #   restart: always
+  #   env_file:
+  #     - .env 
+  #   networks: 
+  #     - uc-network
+  #   volumes:
+  #     - type: bind
+  #       source: ./
+  #       target: /home/app
 networks:
   uc-network:
     driver: bridge

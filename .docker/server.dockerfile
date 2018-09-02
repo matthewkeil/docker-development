@@ -4,11 +4,11 @@ COPY .docker/ssl /etc/ssl/certs
 
 ENV HOME=/home/app
 
-RUN useradd --user-group --create-home --shell /bin/false app
+# RUN useradd --user-group --create-home --shell /bin/false app
 
 WORKDIR ${HOME}
 
-USER app
+# USER app
 
 EXPOSE 4000
 
