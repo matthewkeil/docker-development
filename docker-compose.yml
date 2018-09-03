@@ -8,17 +8,19 @@ volumes:
   
 services:
   data:
-    container_name: data
+    container_name: uc_data
     build:
       context: .
       dockerfile: .docker/data.dockerfile
+    env_file:
+      - ./.env
     volumes:
       - mongo:/data/mongo
       - neo4j:/data/neo4j
       - redis:/data/redis
       - nginx:/data/nginx
   redis:
-    container_name: redis
+    container_name: uc_redis
     restart: always
     build: 
       context: .
@@ -32,14 +34,11 @@ services:
     volumes:
       - redis:/data
   mongo:
-    container_name: mongo
+    container_name: uc_mongo
     restart: always
     image: bitnami/mongodb:latest
-    environment:
-      - MONGODB_ROOT_PASSWORD=pass
-      - MONGODB_DATABASE=utila-coffee
-      - MONGODB_USERNAME=apiUser
-      - MONGODB_PASSWORD=apiPass
+    env_file:
+      - ./.env
     networks: 
       - uc-network
     ports:
@@ -47,7 +46,7 @@ services:
     volumes:
       - mongo:/bitnami
   neo4j:
-    container_name: neo4j
+    container_name: uc_neo4j
     restart: always
     image: bitnami/neo4j
     env_file:
@@ -75,20 +74,20 @@ services:
   #     - type: bind 
   #       source: ./.dev/nginx/cache
   #       target: /var/cache/nginx
-  # graphql:
-  #   container_name: graphql
-  #   build:
-  #     context: .
-  #     dockerfile: .docker/server.dockerfile
-  #   restart: always
-  #   env_file:
-  #     - .env 
-  #   networks: 
-  #     - uc-network
-  #   volumes:
-  #     - type: bind
-  #       source: ./
-  #       target: /home/app
+  graphql:
+    container_name: uc_graphql
+    build:
+      context: .
+      dockerfile: .docker/server.dockerfile
+    restart: always
+    env_file:
+      - .env 
+    networks: 
+      - uc-network
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/app
 networks:
   uc-network:
     driver: bridge
