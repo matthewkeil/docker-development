@@ -6,23 +6,21 @@
 #
 #
 # set -o noclobber
-# set -x
+set -x
 
 export NODE_ENV=${NODE_ENV:-"development"}
 
 # mongod command options
 # add values to the below to set them otherwise leave blank
-export MONGO_AUTH=${MONGO_AUTH:-""} # defaults to true, set to "false" to disable
-export MONGO_SSL=${MONGO_SSL:-""} # defaults to true, set to "false" to disable
-export MONGO_PROFILING=${MONGO_PROFILING:-""}
-export MONGODB_ROOT_USER=${MONGODB_ROOT_USER:-"admin"}
-export MONGODB_ROOT_PASS=${MONGODB_ROOT_PASS:-"pass"}
-export MONGO_DB_NAME=${MONGO_DB_NAME:-"default"}
-export MONGO_USERNAME=${MONGO_USERNAME:-"apiUser"}
-export MONGO_PASSWORD=${MONGO_PASSWORD:-"apiPass"}
-export MONGO_DATA="${MONGO_DATA:-"/data/db"}"
-export SETUP_DIR="${MONGO_DATA}/.setup"
-export SETUP_FILE="${SETUP_DIR}/${MONGO_DB_NAME}.conf"
+MONGO_AUTH=${MONGO_AUTH:-""} # defaults to true, set to "false" to disable
+MONGO_SSL=${MONGO_SSL:-""} # defaults to true, set to "false" to disable
+MONGO_PROFILING=${MONGO_PROFILING:-""}
+MONGO_DB_NAME=${MONGO_DB_NAME:-"default"}
+MONGO_USERNAME=${MONGO_USERNAME:-"apiUser"}
+MONGO_PASSWORD=${MONGO_PASSWORD:-"apiPass"}
+MONGO_DATA="${MONGO_DATA:-"/data/db"}"
+SETUP_DIR="/usr/local/etc/mongo"
+SETUP_FILE="${SETUP_DIR}/${MONGO_DB_NAME}.conf"
 
 
 #
@@ -43,9 +41,9 @@ fi
 if [[ "$MONGO_SSL" == "false" ]]; then
     echo ">>> SSL Dissabled <<<"
 else
-    MONGOD="$MONGOD --sslMode requireSSL                \
-    --sslPEMKeyFile /usr/local/etc/ssl/certs/uc.pem     \
-    --sslCAFile /usr/local/etc/ssl/certs/root.crt "
+    MONGOD="$MONGOD --sslMode requireSSL                          \
+    --sslPEMKeyFile /usr/local/etc/ssl/certs/mongo/${MONGO_DB_NAME}.pem     \
+    --sslCAFile /usr/local/etc/ssl/certs/mongo/${MONGO_DB_NAME}-root.crt "
 fi
 
 if [[ $MONGO_PROFILING != "" ]]; then
@@ -80,6 +78,7 @@ function build_db() {
     db.createUser({user: '$MONGO_USERNAME', pwd: '$MONGO_PASSWORD', roles:[{role:'dbOwner', db:'$MONGO_DB_NAME'}]})
 EOF
     sleep 1
+    touch $SETUP_FILE
     printf "${MONGO_DB_NAME}\n${MONGO_USERNAME}\n${MONGO_PASSWORD}\n" >> $SETUP_FILE
 }
 
@@ -88,7 +87,7 @@ EOF
 #   determine mongo and database status
 #
 #
-if [[ -d $SETUP_DIR ]]; then
+if [[ $MONGODB_ROOT_USER != "" ]]; then
    
     if [[ -f $SETUP_FILE ]]; then
         printf ">>>\n>>> found setup file ${SETUP_FILE}\n>>>\n>>> daemon starting\n>>>\n"
@@ -102,10 +101,18 @@ if [[ -d $SETUP_DIR ]]; then
 else
     printf ">>>\n>>> starting mongo for the first time and creating root account\n>>>\n>>> starting daemon\n>>>\n"
 
-    $BASE_CMD               & 
-    build_root              && \
-    build_db                && \
+    export MONGODB_ROOT_USER=${MONGODB_ROOT_USER:-"admin"}
+    export MONGODB_ROOT_PASS=${MONGODB_ROOT_PASS:-"pass"}
+
+    echo "export MONGODB_ROOT_USER=$MONGODB_ROOT_USER\nexport MONGODB_ROOT_PASS=$MONGODB_ROOT_PASS" >> ${HOME}/.bash_profile
+
+    mkdir $SETUP_DIR
+
+    $BASE_CMD                                       & 
+    build_root                                      && \
+    build_db                                        && \
     mongod --shutdown
+
 fi
 
 exec $MONGOD

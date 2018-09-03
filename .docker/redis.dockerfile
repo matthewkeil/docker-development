@@ -1,11 +1,6 @@
 FROM redis:latest
 
 COPY .docker/config/redis.conf /etc/redis/redis.conf
-COPY .docker/ssl /etc/ssl/certs
-
-# not sure if i need this 
-# VOLUME [ "/var/lib/redis:/var/lib/redis" ]
-# RUN chown redis:redis /var/lib/redis/*
 
 EXPOSE 6379
 

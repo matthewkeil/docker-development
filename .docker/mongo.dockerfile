@@ -32,7 +32,7 @@ VOLUME /data/db
 
 COPY .docker/bin /usr/local/bin/
 
-COPY .docker/ssl /etc/ssl/certs/
+COPY .docker/ssl /usr/local/etc/ssl/certs/mongo
 
 WORKDIR /usr/local/bin
 
