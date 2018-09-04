@@ -1,62 +1,64 @@
 version: "3.7"
 
 volumes:
-  mongo:
-  neo4j:
-  redis:
-  nginx:
+  project-sync:
+    external: true
+#   mongo:
+#   neo4j:
+#   redis:
+#   nginx:
   
 services:
-  data:
-    container_name: uc_data
-    build:
-      context: .
-      dockerfile: .docker/data.dockerfile
-    env_file:
-      - ./.env
-    volumes:
-      - mongo:/data/mongo
-      - neo4j:/data/neo4j
-      - redis:/data/redis
-      - nginx:/data/nginx
-  redis:
-    container_name: uc_redis
-    restart: always
-    build: 
-      context: .
-      dockerfile: .docker/redis.dockerfile
-    env_file:
-      - .env
-    networks:
-      - uc-network
-    ports: 
-      - "6379:6379"
-    volumes:
-      - redis:/data
-  mongo:
-    container_name: uc_mongo
-    restart: always
-    image: bitnami/mongodb:latest
-    env_file:
-      - ./.env
-    networks: 
-      - uc-network
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo:/bitnami
-  neo4j:
-    container_name: uc_neo4j
-    restart: always
-    image: bitnami/neo4j
-    env_file:
-      - ./.env
-    networks:
-      - uc-network
-    ports: 
-      - "7687:7687"
-    volumes: 
-      - neo4j:/bitnami
+  # data:
+  #   container_name: uc_data
+  #   build:
+  #     context: .
+  #     dockerfile: .docker/data.dockerfile
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - mongo:/data/mongo
+  #     - neo4j:/data/neo4j
+  #     - redis:/data/redis
+  #     - nginx:/data/nginx
+  # redis:
+  #   container_name: uc_redis
+  #   restart: always
+  #   build: 
+  #     context: .
+  #     dockerfile: .docker/redis.dockerfile
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - uc-network
+  #   ports: 
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis:/data
+  # mongo:
+  #   container_name: uc_mongo
+  #   restart: always
+  #   image: bitnami/mongodb:latest
+  #   env_file:
+  #     - ./.env
+  #   networks: 
+  #     - uc-network
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo:/bitnami
+  # neo4j:
+  #   container_name: uc_neo4j
+  #   restart: always
+  #   image: bitnami/neo4j
+  #   env_file:
+  #     - ./.env
+  #   networks:
+  #     - uc-network
+  #   ports: 
+  #     - "7687:7687"
+  #   volumes: 
+  #     - neo4j:/bitnami
   # nginx:
   #   container_name: nginx
   #   restart: always
@@ -78,7 +80,7 @@ services:
     container_name: uc_graphql
     build:
       context: .
-      dockerfile: .docker/server.dockerfile
+      dockerfile: .docker/dev.dockerfile
     restart: always
     env_file:
       - .env 
@@ -86,8 +88,11 @@ services:
       - uc-network
     volumes:
       - type: bind
-        source: ./
-        target: /home/app
+        source: ./server
+        target: /usr/local/graphql/server/
+      # - type: bind
+      #   source: ./node_modules
+      #   target: /usr/local/graphql//node_modules
 networks:
   uc-network:
     driver: bridge

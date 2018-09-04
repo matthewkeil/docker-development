@@ -22,9 +22,6 @@ const server = http.createServer((req, res) => {
   res.end("<h1>It Works</h1>");
 });
 
-
-
-
 server.listen(4000, () => console.log('Listening on port 4000'));
 
 
@@ -37,26 +34,24 @@ server.listen(4000, () => console.log('Listening on port 4000'));
 // if you want to use npm then start with `docker run --init` to help, but I still don't think it's
 // a graceful shutdown of node process
 //
-
 // shut down server
-function shutdown() {
-  server.close(function onServerClosed (err) {
-    if (err) {
-      console.error(err);
-      process.exitCode = 1;
-    }
-    process.exit();
-  })
-}
-
-// quit on ctrl-c when running docker in terminal
-process.on('SIGINT', function onSigint () {
-	console.info('Got SIGINT (aka ctrl-c in docker). Graceful shutdown ', new Date().toISOString());
-  shutdown();
-});
-
-// quit properly on docker stop
-process.on('SIGTERM', function onSigterm () {
-  console.info('Got SIGTERM (docker container stop). Graceful shutdown ', new Date().toISOString());
-  shutdown();
-})
+// function shutdown() {
+//   server.close(err => {
+//     server.close(() => console.log('closing server'));
+//     if (err) {
+//       console.error(err);
+//       process.exitCode = 1;
+//     }
+//     process.exit();
+//   })
+// }
+// // quit on ctrl-c when running docker in terminal
+// process.on('SIGINT', () => {
+// 	console.info('Got SIGINT (aka ctrl-c in docker). Graceful shutdown ', new Date().toISOString());
+//   shutdown();
+// });
+// // quit properly on docker stop
+// process.on('SIGTERM', () => {
+//   console.info('Got SIGTERM (docker container stop). Graceful shutdown ', new Date().toISOString());
+//   shutdown();
+// })
