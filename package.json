@@ -5,10 +5,8 @@
   "version": "1.0.0",
   "description": "Home of UTILA.coffee",
   "scripts": {
-    "mongo": ".docker/bin/mongo_start.sh",
-    "dev": "npm run server & npm run playground",
     "playground": "graphql playground",
-    "server": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql"
+    "graphql": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
@@ -27,6 +25,7 @@
     "@types/bcryptjs": "2.4.1",
     "prisma": "1.14.0",
     "ts-node": "6.2.0",
+    "tsc-watch": "^1.0.27",
     "typescript": "2.9.2"
   },
   "license": "MIT",

@@ -53,8 +53,7 @@ fi
 
 function wait_for_mongo() {
     # Wait for MongoDB to boot
-    NOT_RUNNING=1
-    while [[ NOT_RUNNING -ne 0 ]]; do
+    NOT_RUNNING=1    while [[ NOT_RUNNING -ne 0 ]]; do
         echo ">>> waiting for of mongo daemon to start..."
         sleep 1
         mongo admin --eval "help" >/dev/null 2>&1

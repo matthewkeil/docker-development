@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "include": ["api"],
-  "compilerOptions": {
-    "outDir": ".build/api",
-    "watch": true
-  }
-}
