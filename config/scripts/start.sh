@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 
 trap cleanup SIGINT SIGTERM EXIT
 
@@ -26,12 +26,11 @@ function kill_process() {
 
 function docker_compose_build() {
 
-    printf "\n>>>\n>>>\n>>> building default.conf for uc_nginx n\n>>>\n>>>\n>>>\n"
-    envsubst '${PROJECT_ROOT},${NGINX_PORT},${DOCKER_MACHINE_IP}' < config/nginx/default.${NODE_ENV}.conf \
-    | tee config/nginx/default.conf
+    printf "\n>>>\n>>>\n>>> building nginx.conf for uc_nginx n\n>>>\n>>>\n>>>\n"
+    envsubst '${HOST}' < config/nginx/${NODE_ENV}.conf > config/nginx/nginx.conf
 
     printf "\n>>>\n>>>\n>>> running docker-compose build\n>>>\n>>>\n"
-    docker-compose build 1> /dev/null 2> /dev/stderr
+    docker-compose build 1> /dev/stdout 2> /dev/stderr
     
     if [[ $? -ne 0 ]]; then
         printf "\n>>>\n>>>\n>>> docker-compose build encoutered an error\n>>>\n>>>\n" > /dev/stderr
@@ -47,7 +46,7 @@ function docker_compose_up() {
         sleep 1
     done
     printf "\n>>>\n>>>\n>>> running docker-compose up\n>>>\n>>>\n"
-    # docker-compose up 1> /dev/stdout 2> /dev/stderr
+    docker-compose up 1> /dev/stdout 2> /dev/stderr
 }
 
 function start_nginx() {
@@ -59,10 +58,10 @@ function start_nginx() {
     kill_process nginx
     
     printf "\n>>>\n>>>\n>>> building nginx.conf\n>>> starting nginx with the following configuration\n>>>\n>>>\n>>>\n"
-    envsubst '${PROJECT_ROOT},${NGINX_PORT},${DOCKER_MACHINE_IP}' < config/nginx/dev.tmpl | tee config/nginx/dev.conf
+    envsubst '${PROJECT_ROOT},${NGINX_PORT},${DOCKER_MACHINE_IP}' < config/nginx/dev-server.tmpl > config/nginx/dev-server.conf
 
     printf "\n>>>\n>>>\n>>> nginx serving dev env on localhost:$NGINX_PORT\n>>>\n"
-    nginx -c ${PROJECT_ROOT}/config/nginx/dev.conf -g "daemon off;" 1>> /dev/stdout 2>> /dev/stderr &
+    nginx -c config/nginx/dev-server.conf -g "daemon off;" 1>> /dev/stdout 2>> /dev/stderr &
     
     sleep 1
 
@@ -84,7 +83,7 @@ function get_docker_ip() {
     IP="$(docker-machine ip 2> /dev/null)"
     if [[ ! $IP ]]; then
         printf "\n>>>\n>>>\n>>> starting docker-machine\n>>> waiting for of IP address\n>>>\n"
-        docker-machine start > /dev/null 2>> /dev/stderr && IP="$(docker-machine ip 2> /dev/null)"
+        docker-machine start > /dev/stdout 2>> /dev/stderr && IP="$(docker-machine ip 2> /dev/null)"
     fi
 
     #

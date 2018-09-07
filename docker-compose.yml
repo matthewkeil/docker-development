@@ -8,26 +8,30 @@ volumes:
   node_modules:
   
 services:
-  data:
-    container_name: uc_data
-    build:
-      context: .
-      dockerfile: config/docker/data.dockerfile
-    env_file:
-      - .env
-    networks:
-      - uc-network
-    volumes:
-      - nginx:/data/nginx
-      - redis:/data/redis
-      - neo4j:/data/neo4j
-      - mongo:/data/mongo
+  # data:
+  #   container_name: uc_data
+  #   build:
+  #     context: .
+  #     dockerfile: config/docker/data.dockerfile
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - uc-network
+  #   volumes:
+      # - nginx:/data/nginx
+  #     - redis:/data/redis
+  #     - neo4j:/data/neo4j
+  #     - mongo:/data/mongo
   nginx:
     container_name: nginx
     restart: always
     build:
       context: .
       dockerfile: config/docker/nginx.dockerfile
+    # cap_drop: 
+    #   - ALL
+    # cap_add:
+    #   - NET_BIND_SERVICE
     networks: 
       - uc-network
     depends_on:
@@ -35,49 +39,47 @@ services:
     volumes:
       - type: bind
         source: ./public
-        target: /var/public/
-      - type: bind 
-        source: ./.dev/nginx/cache
-        target: /var/cache/nginx
-  redis:
-    container_name: uc_redis
-    restart: always
-    build: 
-      context: .
-      dockerfile: config/docker/redis.dockerfile
-    env_file:
-      - .env
-    networks:
-      - uc-network
-    ports: 
-      - "6379:6379"
-    volumes:
-      - redis:/data
-  neo4j:
-    container_name: uc_neo4j
-    restart: always
-    image: bitnami/neo4j
-    env_file:
-      - .env
-    networks:
-      - uc-network
-    ports: 
-      - "7687:7687"
-    volumes: 
-      - neo4j:/bitnami/neo4j
-  mongo:
-    container_name: uc_mongo
-    restart: always
-    image: bitnami/mongodb:latest
-    env_file:
-      - .env
-    networks: 
-      - uc-network
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo:/bitnami/mongo
-    graphql:
+        target: /var/www/public/
+      - nginx:/var/cache/nginx
+  # redis:
+  #   container_name: uc_redis
+  #   restart: always
+  #   build: 
+  #     context: .
+  #     dockerfile: config/docker/redis.dockerfile
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - uc-network
+  #   ports: 
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis:/data
+  # neo4j:
+  #   container_name: uc_neo4j
+  #   restart: always
+  #   image: bitnami/neo4j
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - uc-network
+  #   ports: 
+  #     - "7687:7687"
+  #   volumes: 
+  #     - neo4j:/bitnami/neo4j
+  # mongo:
+  #   container_name: uc_mongo
+  #   restart: always
+  #   image: bitnami/mongodb:latest
+  #   env_file:
+  #     - .env
+  #   networks: 
+  #     - uc-network
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo:/bitnami/mongo
+  graphql:
     container_name: uc_graphql
     build: 
       context: .

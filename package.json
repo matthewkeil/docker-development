@@ -6,7 +6,8 @@
   "description": "Home of UTILA.coffee",
   "scripts": {
     "playground": "graphql playground",
-    "graphql": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql"
+    "graphql": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql",
+    "start": "config/scripts/start.sh"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
