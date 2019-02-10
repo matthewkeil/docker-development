@@ -1,48 +1,52 @@
 {
-  "name": "uc",
+  "name": "docker-gql",
   "author": "Matthew Keil",
-  "homepage": "https://utila.coffee",
+  "homepage": "https://homodigit.us",
   "version": "1.0.0",
-  "description": "Home of UTILA.coffee",
+  "description": "easy way to develop modern javascript and focus on the application. integrates with all front ends. deploys to all environments in both development and production consistently and easily. you are welcome... just sayin...",
+  "main": "index.sh",
+  "bin" : {
+    "docker-gql" : "./index.sh"
+  },
   "scripts": {
-    "playground": "graphql playground",
-    "graphql": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql",
-    "start": "config/scripts/start.sh"
+    "dev": "config/scripts/start.sh",
+    "docker:dev:server": "nodemon --exec node_modules/.bin/ts-node server --watch server --ext ts, graphql",
+    "nginx:localhost": "config/scripts/start_nginx.sh",
+    "start": "npm run dev"
+  },
+  "optionalDependencies": {
+    "bcrypt": "^3.0.0"
   },
   "dependencies": {
-    "bcrypt": "^3.0.0",
-    "dotenv": "^6.0.0",
     "graphql": "^0.13.2",
     "graphql-cli": "^2.16.5",
     "graphql-tools": "^3.1.1",
     "graphql-yoga": "^1.16.1",
-    "http-link-dataloader": "^0.1.4",
     "jsonwebtoken": "^8.3.0",
-    "nodemon": "^1.18.3",
-    "pm2": "^3.0.3",
-    "prisma-binding": "^2.1.4"
+    "pm2": "^3.0.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.1",
-    "prisma": "1.14.0",
+    "nodemon": "^1.18.3",
     "ts-node": "6.2.0",
     "tsc-watch": "^1.0.27",
     "typescript": "2.9.2"
   },
   "license": "MIT",
   "keywords": [
-    "typescript",
+    "docker",
+    "kubernetes",
     "node",
+    "typescript",
     "graphql",
-    "prisma",
-    "graphql-yoga",
-    "docker"
+    "apollo",
+    "graphql-yoga"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matthewkeil/uc.git"
+    "url": "git+https://github.com/homodigitus/docker-graphql.git"
   },
   "bugs": {
-    "url": "https://github.com/matthewkeil/uc/issues"
+    "url": "https://github.com/homodigitus/docker-graphql/issues"
   }
 }

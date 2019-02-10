@@ -4,8 +4,11 @@ COPY ./config/nginx/nginx.conf /etc/nginx/
 
 COPY ./config/ssl /usr/local/etc/ssl/certs/
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log; \
+RUN mkdir -p /var/cache/nginx; \
+    ln -sf /dev/stdout /var/log/nginx/access.log; \
     ln -sf /dev/stderr /var/log/nginx/error.log
+
+VOLUME [ "/var/cache/nginx" ]
 
 EXPOSE 80 443
 
